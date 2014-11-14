@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TimePeriod" default="jar" basedir=".">
+    <property name="lib"                 value="${basedir}/lib"/>
+
+    <!-- directories in the main source -->
+    <property name="src"                 value="${basedir}/src"/>
+    <property name="main.java"           value="${src}/main/java"/>
+    <property name="main.resources"      value="${src}/main/resources"/>
+
+    <property name="test.java"           value="${src}/test/java"/>
+
+    <!-- build directories -->
+    <property name="build"               value="${basedir}/build"/>
+    <property name="build.test"          value="${build}/test"/>
+    <property name="report.dir"          value="${build}/report"/>
+
+    <!-- where to put the final jar and what to name it -->
+    <property name="app"                 value="${basedir}/antout"/>
+    <property name="jar"                 value="timeperiod-0.1.jar"/>
+
+    <target name="compile" description="compiles the source code">
+        <mkdir dir="${build}"/>
+        <javac destdir="${build}" includeantruntime="false">
+            <src path="${main.java}"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="creates a jar from the main library">
+        <mkdir dir="${app}"/>
+        <jar destfile="${app}/${jar}" basedir="${build}" includes="com/**" manifest="${main.resources}/META-INF/MANIFEST.MF"/>
+    </target>
+
+    <target name="compile.test" depends="jar" description="compiles the unit tests">
+        <mkdir dir="${build.test}"/>
+        <javac destdir="${build.test}" includeantruntime="false">
+            <classpath>
+                <pathelement location="${app}/${jar}"/>
+                <pathelement location="${lib}/junit-4.8.jar"/>
+            </classpath>
+            <src path="${test.java}"/>
+        </javac>
+    </target>
+
+    <target name="test" depends="compile.test" description="Runs all of the unit tests">
+        <mkdir dir="${report.dir}"/>
+        <junit fork="on" forkmode="once" maxmemory="1024m" failureproperty="testfailed" printsummary="true"
+               haltonerror="false" haltonfailure="false">
+            <classpath>
+                <pathelement location="${lib}/junit-4.8.jar"/>
+                <pathelement location="${app}/${jar}"/>
+                <pathelement location="${build.test}"/>
+            </classpath>
+
+            <formatter type="xml"/>
+
+            <batchtest todir="${report.dir}">
+                <fileset dir="${build.test}" includes="**/*.class"/>
+            </batchtest>
+        </junit>
+        <junitreport todir="${report.dir}">
+            <fileset dir="${report.dir}" includes="TEST-*.xml"/>
+            <report todir="${report.dir}"/>
+        </junitreport>
+        <fail if="testfailed" message="Some test(s) failed."/>
+    </target>
+
+    <target name="clean" description="deletes all build artifacts">
+        <delete dir="${build}"/>
+        <delete dir="${app}"/>
+    </target>
+</project>
