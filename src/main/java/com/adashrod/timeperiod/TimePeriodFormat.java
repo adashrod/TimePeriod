@@ -1,4 +1,4 @@
-package com.aaron.timeperiod;
+package com.adashrod.timeperiod;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Used for parsing Strings and turning them into {@link com.aaron.timeperiod.TimePeriod}s and for formatting
- * {@link com.aaron.timeperiod.TimePeriod}s as Strings.
+ * Used for parsing Strings and turning them into {@link com.adashrod.timeperiod.TimePeriod}s and for formatting
+ * {@link com.adashrod.timeperiod.TimePeriod}s as Strings.
  * Formats are specified by pattern strings. Within date and time pattern strings, unquoted letters from 'A' to 'Z' and
  * from 'a' to 'z' are interpreted as pattern letters representing the components of a time period string. Text can be
  * quoted using single quotes (') to avoid interpretation. "''" within a single-quoted section represents a literal
@@ -75,7 +75,7 @@ import java.util.stream.Collectors;
  *  pattern "m:s.z" looks at at most 2 chars for minutes, 2 chars for seconds, and 3 chars for milliseconds when parsing
  *      because the maximum normalized values of minutes, seconds, and milliseconds are 59, 59, and 999 respectively.
  *  pattern "mmmm:ssss.zzzz" looks at at most 4 chars for each
- * See note on parsing at {@link com.aaron.timeperiod.TimePeriodFormat#setMaxUnit(TimeUnit)}
+ * See note on parsing at {@link com.adashrod.timeperiod.TimePeriodFormat#setMaxUnit(TimeUnit)}
  *
  * When using the letters for names of units (WDHMSZ), a singular letter will mean the abbreviation for that unit and
  * two or more will mean the full name of the unit. When parsing, trailing 's' are ignored for plural unit names; when
@@ -91,7 +91,7 @@ import java.util.stream.Collectors;
 public class TimePeriodFormat {
     private TimeUnit maxTimeUnit;
     /**
-     * passed as first argument to String.format() in {@link com.aaron.timeperiod.TimePeriodFormat#format(TimePeriod)}
+     * passed as first argument to String.format() in {@link com.adashrod.timeperiod.TimePeriodFormat#format(TimePeriod)}
      */
     private final String compiledFormatString;
     /**
@@ -99,7 +99,7 @@ public class TimePeriodFormat {
      */
     private final List<Evaluator> evaluators = new ArrayList<>();
     /**
-     * Used for reading tokens in {@link com.aaron.timeperiod.TimePeriodFormat#parse(String)}
+     * Used for reading tokens in {@link com.adashrod.timeperiod.TimePeriodFormat#parse(String)}
      */
     private final List<Reader> readers = new ArrayList<>();
 

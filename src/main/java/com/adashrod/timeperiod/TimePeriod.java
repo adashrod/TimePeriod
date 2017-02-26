@@ -1,4 +1,4 @@
-package com.aaron.timeperiod;
+package com.adashrod.timeperiod;
 
 import java.text.ParseException;
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * A TimePeriod object represents a period of time, i.e. a length of time without context of the beginning or end of the
- * period. It currently supports the units described in {@link com.aaron.timeperiod.TimeUnit}. It doesn't support anything
+ * period. It currently supports the units described in {@link com.adashrod.timeperiod.TimeUnit}. It doesn't support anything
  * larger than weeks since they have variable conversions, e.g. months can be 28, 29, 30, or 31 days; years can be 365
  * or 366 days, etc.
  */
