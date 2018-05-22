@@ -1,12 +1,13 @@
-package com.aaron.timeperiod;
+package com.adashrod.timeperiod;
 
+import javafx.util.Pair;
 import org.junit.Test;
 
 import java.text.ParseException;
 
-import static com.aaron.timeperiod.TimeUnit.DAY;
-import static com.aaron.timeperiod.TimeUnit.HOUR;
-import static com.aaron.timeperiod.TimeUnit.WEEK;
+import static com.adashrod.timeperiod.TimeUnit.DAY;
+import static com.adashrod.timeperiod.TimeUnit.HOUR;
+import static com.adashrod.timeperiod.TimeUnit.WEEK;
 import static junit.framework.Assert.assertEquals;
 
 /**
@@ -21,12 +22,12 @@ public class TimePeriodTests {
         final Pair<Long, TimeUnit> t1InDays = t1.getLargestUnit(DAY);
         final Pair<Long, TimeUnit> t1InHours = t1.getLargestUnit(HOUR);
 
-        assertEquals(2, (long) t1InWeeks.getFirst());
-        assertEquals(WEEK, t1InWeeks.getSecond());
-        assertEquals(14, (long) t1InDays.getFirst());
-        assertEquals(DAY, t1InDays.getSecond());
-        assertEquals(336, (long) t1InHours.getFirst());
-        assertEquals(HOUR, t1InHours.getSecond());
+        assertEquals(2, (long) t1InWeeks.getKey());
+        assertEquals(WEEK, t1InWeeks.getValue());
+        assertEquals(14, (long) t1InDays.getKey());
+        assertEquals(DAY, t1InDays.getValue());
+        assertEquals(336, (long) t1InHours.getKey());
+        assertEquals(HOUR, t1InHours.getValue());
 
         final TimePeriod t2 = new TimePeriod();
         t2.setWeeks(0).setDays(3).setHours(5).setMinutes(0).setSeconds(0);
@@ -35,12 +36,12 @@ public class TimePeriodTests {
         final Pair<Long, TimeUnit> t2InDays = t2.getLargestUnit(DAY);
         final Pair<Long, TimeUnit> t2InHours = t2.getLargestUnit(HOUR);
 
-        assertEquals(77, (long) t2InWeeks.getFirst());
-        assertEquals(HOUR, t2InWeeks.getSecond());
-        assertEquals(77, (long) t2InDays.getFirst());
-        assertEquals(HOUR, t2InDays.getSecond());
-        assertEquals(77, (long) t2InHours.getFirst());
-        assertEquals(HOUR, t2InHours.getSecond());
+        assertEquals(77, (long) t2InWeeks.getKey());
+        assertEquals(HOUR, t2InWeeks.getValue());
+        assertEquals(77, (long) t2InDays.getKey());
+        assertEquals(HOUR, t2InDays.getValue());
+        assertEquals(77, (long) t2InHours.getKey());
+        assertEquals(HOUR, t2InHours.getValue());
     }
 
     @Test

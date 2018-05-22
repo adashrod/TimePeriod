@@ -19,51 +19,51 @@ import java.util.stream.Collectors;
  * or matched against the input string during parsing.
  *
  * The following pattern letters are defined (all other characters from 'A' to 'Z' and from 'a' to 'z' are reserved):
- * <table>
- *     <thead>
- *         <tr>
- *             <th>Letter</th><th>TimePeriod Component</th><th>Example</th>
- *         </tr>
- *     </thead>
- *     <tbody>
- *         <tr>
- *             <td>w</td>     <td>weeks</td>               <td>645</td>
- *         </tr>
- *         <tr>
- *             <td>d</td>     <td>days</td>                <td>5</td>
- *         </tr>
- *         <tr>
- *             <td>h</td>     <td>hours</td>               <td>23</td>
- *         </tr>
- *         <tr>
- *             <td>m</td>     <td>minutes</td>             <td>2</td>
- *         </tr>
- *         <tr>
- *             <td>s</td>     <td>seconds</td>             <td>0</td>
- *         </tr>
- *         <tr>
- *             <td>z</td>     <td>milliseconds</td>        <td>0</td>
- *         </tr>
- *         <tr>
- *             <td>W</td>     <td>weeks unit name</td>     <td>weeks</td>
- *         </tr>
- *         <tr>
- *             <td>D</td>     <td>days unit name</td>      <td>days</td>
- *         </tr>
- *         <tr>
- *             <td>H</td>     <td>hours unit name</td>     <td>hours</td>
- *         </tr>
- *         <tr>
- *             <td>M</td>     <td>minutes unit name</td>   <td>minutes</td>
- *         </tr>
- *         <tr>
- *             <td>S</td>     <td>seconds unit name</td>   <td>seconds</td>
- *         </tr>
- *         <tr>
- *             <td>Z</td>     <td>milliseconds unit name</td><td>milliseconds</td>
- *         </tr>
- *     </tbody>
- * </table>
+ * &lt;table&gt;
+ *     &lt;thead&gt;
+ *         &lt;tr&gt;
+ *             &lt;th&gt;Letter&lt;/th&gt;&lt;th&gt;TimePeriod Component&lt;/th&gt;&lt;th&gt;Example&lt;/th&gt;
+ *         &lt;/tr&gt;
+ *     &lt;/thead&gt;
+ *     &lt;tbody&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;w&lt;/td&gt;     &lt;td&gt;weeks&lt;/td&gt;               &lt;td&gt;645&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;d&lt;/td&gt;     &lt;td&gt;days&lt;/td&gt;                &lt;td&gt;5&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;h&lt;/td&gt;     &lt;td&gt;hours&lt;/td&gt;               &lt;td&gt;23&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;m&lt;/td&gt;     &lt;td&gt;minutes&lt;/td&gt;             &lt;td&gt;2&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;s&lt;/td&gt;     &lt;td&gt;seconds&lt;/td&gt;             &lt;td&gt;0&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;z&lt;/td&gt;     &lt;td&gt;milliseconds&lt;/td&gt;        &lt;td&gt;0&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;W&lt;/td&gt;     &lt;td&gt;weeks unit name&lt;/td&gt;     &lt;td&gt;weeks&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;D&lt;/td&gt;     &lt;td&gt;days unit name&lt;/td&gt;      &lt;td&gt;days&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;H&lt;/td&gt;     &lt;td&gt;hours unit name&lt;/td&gt;     &lt;td&gt;hours&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;M&lt;/td&gt;     &lt;td&gt;minutes unit name&lt;/td&gt;   &lt;td&gt;minutes&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;S&lt;/td&gt;     &lt;td&gt;seconds unit name&lt;/td&gt;   &lt;td&gt;seconds&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *         &lt;tr&gt;
+ *             &lt;td&gt;Z&lt;/td&gt;     &lt;td&gt;milliseconds unit name&lt;/td&gt;&lt;td&gt;milliseconds&lt;/td&gt;
+ *         &lt;/tr&gt;
+ *     &lt;/tbody&gt;
+ * &lt;/table&gt;
  *
  * When using the letters for numbers of units (wdhmsZ), the number of repeated letters determines how many leading
  * zeroes will be used in formatting.

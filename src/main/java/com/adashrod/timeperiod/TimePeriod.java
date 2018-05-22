@@ -142,18 +142,18 @@ public class TimePeriod {
      * - the largest unit that the Time object comprises
      * The largestAllowed parameter determines the largest unit type that will be returned. The TimeUnit return can be
      * smaller than largestAllowed if necessary to prevent loss of data. Note Example 2 below where all return values
-     * are in hours. This is because returning <3, DAY> would obscure the remaining 5 hours.
+     * are in hours. This is because returning &lt;3, DAY&gt; would obscure the remaining 5 hours.
      * Example 1
      * A Time object t is "2 weeks"
-     * t.getLargestUnit(TimeUnit.WEEK) == <2, WEEK>
-     * t.getLargestUnit(TimeUnit.DAY) == <14, DAY>
-     * t.getLargestUnit(TimeUnit.HOUR) == <336, HOUR>
+     * t.getLargestUnit(TimeUnit.WEEK) == &lt;2, WEEK&gt;
+     * t.getLargestUnit(TimeUnit.DAY) == &lt;14, DAY&gt;
+     * t.getLargestUnit(TimeUnit.HOUR) == &lt;336, HOUR&gt;
      *
      * Example 2
      * t is 3 days + 5 hours
-     * t.getLargestUnit(TimeUnit.WEEK) == <77, HOUR>
-     * t.getLargestUnit(TimeUnit.DAY) == <77, HOUR>
-     * t.getLargestUnit(TimeUnit.HOUR) == <77, HOUR>
+     * t.getLargestUnit(TimeUnit.WEEK) == &lt;77, HOUR&gt;
+     * t.getLargestUnit(TimeUnit.DAY) == &lt;77, HOUR&gt;
+     * t.getLargestUnit(TimeUnit.HOUR) == &lt;77, HOUR&gt;
      * @param largestAllowed the largest unit type that will be returned, regardless of how much time is in the object
      * @return a pair with an Long and a TimeUnit
      */

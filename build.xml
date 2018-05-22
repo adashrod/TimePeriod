@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="TimePeriod" default="jar" basedir=".">
-    <property name="lib"                 value="${basedir}/lib"/>
+<project name="TimePeriod" default="create-jar.runtime" basedir="."
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="lib.dir" value="${basedir}/lib"/>
+
+    <property name="ivy.install.version" value="2.4.0"/>
+    <property name="ivy.jar.dir"         value="${basedir}/ivy"/>
+    <property name="ivy.jar.file"        value="${ivy.jar.dir}/ivy.jar"/>
 
     <!-- directories in the main source -->
     <property name="src"                 value="${basedir}/src"/>
@@ -10,32 +15,131 @@
     <property name="test.java"           value="${src}/test/java"/>
 
     <!-- build directories -->
-    <property name="build"               value="${basedir}/build"/>
-    <property name="build.test"          value="${build}/test"/>
-    <property name="report.dir"          value="${build}/report"/>
+    <property name="build.main.dir"      value="${basedir}/build/main"/>
+    <property name="build.test.dir"      value="${basedir}/build/test"/>
+    <property name="report.dir"          value="${build.test.dir}/report"/>
+    <property name="dist.dir"            value="dist"/>
+    <property name="javadoc.dir"         value="javadoc"/>
 
     <!-- where to put the final jar and what to name it -->
-    <property name="app"                 value="${basedir}/antout"/>
-    <property name="jar"                 value="timeperiod-0.1.jar"/>
+    <property name="target.dir"          value="${basedir}/target"/>
+    <property name="artifact.name"       value="timeperiod"/>
 
-    <target name="compile" description="compiles the source code">
-        <mkdir dir="${build}"/>
-        <javac destdir="${build}" includeantruntime="false">
+    <path id="classpath.test">
+        <fileset dir="${lib.dir}/runtime">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <available file="${ivy.jar.file}" property="ivy.installed"/>
+
+    <target name="ivy.load-settings" depends="ivy.install">
+        <ivy:settings file="ivySettings.xml"/>
+    </target>
+
+    <target name="ivy.download" unless="ivy.installed" description="downloads the ivy jar file">
+        <echo message="downloading ivy..."/>
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+
+    <target name="ivy.install" depends="ivy.download" description="registers the ivy antlib in ant">
+        <echo message="registering ivy antlib..."/>
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <target name="ivy.resolve.test" depends="ivy.install, ivy.load-settings" description="resolve ivy dependencies for running the server">
+        <ivy:retrieve conf="test" pattern="${lib.dir}/[conf]/[organisation]-[artifact]-[revision].[ext]"/>
+    </target>
+
+    <target name="compile.main" description="compiles the source code">
+        <mkdir dir="${build.main.dir}"/>
+        <javac destdir="${build.main.dir}" includeantruntime="false">
             <src path="${main.java}"/>
         </javac>
     </target>
 
-    <target name="jar" depends="compile" description="creates a jar from the main library">
-        <mkdir dir="${app}"/>
-        <jar destfile="${app}/${jar}" basedir="${build}" includes="com/**" manifest="${main.resources}/META-INF/MANIFEST.MF"/>
+    <target name="create-jar.runtime" depends="compile.main" description="creates a jar from the main library">
+        <mkdir dir="${target.dir}"/>
+        <jar destfile="${target.dir}/${artifact.name}.jar" basedir="${build.main.dir}" includes="com/**"/>
     </target>
 
-    <target name="compile.test" depends="jar" description="compiles the unit tests">
-        <mkdir dir="${build.test}"/>
-        <javac destdir="${build.test}" includeantruntime="false">
+    <target name="create-jar.sources">
+        <jar destfile="${dist.dir}/${artifact.name}-${ivy.revision}-sources.jar">
+            <fileset dir="${main.java}" includes="**/*.java"/>
+        </jar>
+    </target>
+
+    <target name="create-jar.javadoc">
+        <javadoc sourcepath="${main.java}" destdir="javadoc"/>
+    </target>
+
+    <target name="publish" depends="ivy.resolve.test, create-jar.sources, create-jar.runtime, create-jar.javadoc, publish.validate">
+        <copy file="${target.dir}/${artifact.name}.jar" tofile="${dist.dir}/${artifact.name}-${ivy.revision}.jar"/>
+        <ivy:makepom ivyfile="ivy.xml" templatefile="pomTemplate.xml" pomfile="${dist.dir}/${artifact.name}-${ivy.revision}.pom"/>
+        <jar basedir="javadoc" file="${dist.dir}/${artifact.name}-${ivy.revision}-javadoc.jar"/>
+        <exec executable="sh">
+            <arg value="-c"/>
+            <arg value="gpg2 -a -b --yes ${dist.dir}/${artifact.name}-${ivy.revision}.jar"/>
+        </exec>
+        <exec executable="sh">
+            <arg value="-c"/>
+            <arg value="gpg2 -a -b --yes ${dist.dir}/${artifact.name}-${ivy.revision}-sources.jar"/>
+        </exec>
+        <exec executable="sh">
+            <arg value="-c"/>
+            <arg value="gpg2 -a -b --yes ${dist.dir}/${artifact.name}-${ivy.revision}-javadoc.jar"/>
+        </exec>
+        <exec executable="sh">
+            <arg value="-c"/>
+            <arg value="gpg2 -a -b --yes ${dist.dir}/${artifact.name}-${ivy.revision}.pom"/>
+        </exec>
+        <fail unless="upload.user" message="parameter upload.user required"/>
+        <fail unless="upload.password" message="parameter upload.password required"/>
+        <fail unless="upload.status" message="parameter upload.status must be one of [&quot;snapshot&quot;, &quot;release&quot;]"/>
+        <fail unless="upload.resolver" message="parameter upload.resolver must be one of [&quot;local&quot;, &quot;nexus-snapshots&quot;, &quot;nexus-staging&quot;]"/>
+        <ivy:publish status="${upload.status}" resolver="${upload.resolver}" overwrite="true"
+                     artifactspattern="${dist.dir}/[artifact]-[revision](-[classifier]).[ext]" publishivy="false"/>
+    </target>
+
+    <target name="publish.validate">
+        <script language="javascript">
+            var ivyVersion = project.getProperty("ivy.revision");
+            var uploadStatus = project.getProperty("upload.status");
+            var uploadResolver = project.getProperty("upload.resolver");
+            var errors = [];
+            if (ivyVersion.toLowerCase().endsWith("snapshot")) {
+                if (uploadStatus !== "snapshot") {
+                    errors.push("upload.status must equal \"snapshot\" for a snapshot version: " + ivyVersion);
+                }
+                if (uploadResolver !== "nexus-snapshots" &amp;&amp; uploadResolver !== "local") {
+                    errors.push("upload.resolver must be \"nexus-snapshots\" or \"local\" for a snapshot version: " + ivyVersion);
+                }
+            } else {
+                if (uploadStatus !== "release") {
+                    errors.push("upload.status must equal \"release\" for a non-snapshot version: " + ivyVersion);
+                }
+                if (uploadResolver !== "nexus-staging" &amp;&amp; uploadResolver !== "local") {
+                    errors.push("upload.resolver must be \"nexus-staging\" or \"local\" for a non-snapshot version: " + ivyVersion);
+                }
+            }
+            if (errors.length > 0) {
+                project.setProperty("publish.validation-failed", true);
+                project.setProperty("publish.errors", errors.join("; "));
+            }
+        </script>
+        <fail if="publish.validation-failed" message="${publish.errors}"/>
+    </target>
+
+    <target name="compile.test" depends="compile.main, ivy.resolve.test" description="compiles the unit tests">
+        <mkdir dir="${build.test.dir}"/>
+        <javac destdir="${build.test.dir}" includeantruntime="false">
             <classpath>
-                <pathelement location="${app}/${jar}"/>
-                <pathelement location="${lib}/junit-4.8.jar"/>
+                <files includes="${build.main.dir}"/>
+                <files includes="${lib.dir}/test/*.jar"/>
             </classpath>
             <src path="${test.java}"/>
         </javac>
@@ -46,15 +150,15 @@
         <junit fork="on" forkmode="once" maxmemory="1024m" failureproperty="testfailed" printsummary="true"
                haltonerror="false" haltonfailure="false">
             <classpath>
-                <pathelement location="${lib}/junit-4.8.jar"/>
-                <pathelement location="${app}/${jar}"/>
-                <pathelement location="${build.test}"/>
+                <files includes="${lib.dir}/test/*.jar"/>
+                <files includes="${build.main.dir}"/>
+                <files includes="${build.test.dir}"/>
             </classpath>
 
             <formatter type="xml"/>
 
             <batchtest todir="${report.dir}">
-                <fileset dir="${build.test}" includes="**/*.class"/>
+                <fileset dir="${build.test.dir}" includes="**/*.class"/>
             </batchtest>
         </junit>
         <junitreport todir="${report.dir}">
@@ -65,7 +169,13 @@
     </target>
 
     <target name="clean" description="deletes all build artifacts">
-        <delete dir="${build}"/>
-        <delete dir="${app}"/>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${build.test.dir}"/>
+            <fileset dir="${lib.dir}"/>
+            <fileset dir="${build.main.dir}"/>
+            <fileset dir="${target.dir}"/>
+            <fileset dir="${dist.dir}"/>
+            <fileset dir="${javadoc.dir}"/>
+        </delete>
     </target>
 </project>

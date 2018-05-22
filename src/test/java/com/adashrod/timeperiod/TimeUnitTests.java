@@ -1,12 +1,12 @@
-package com.aaron.timeperiod;
+package com.adashrod.timeperiod;
 
 import org.junit.Test;
 
-import static com.aaron.timeperiod.TimeUnit.WEEK;
-import static com.aaron.timeperiod.TimeUnit.DAY;
-import static com.aaron.timeperiod.TimeUnit.HOUR;
-import static com.aaron.timeperiod.TimeUnit.MINUTE;
-import static com.aaron.timeperiod.TimeUnit.SECOND;
+import static com.adashrod.timeperiod.TimeUnit.WEEK;
+import static com.adashrod.timeperiod.TimeUnit.DAY;
+import static com.adashrod.timeperiod.TimeUnit.HOUR;
+import static com.adashrod.timeperiod.TimeUnit.MINUTE;
+import static com.adashrod.timeperiod.TimeUnit.SECOND;
 import static junit.framework.Assert.assertEquals;
 
 public class TimeUnitTests {

@@ -1,4 +1,4 @@
-package com.aaron.timeperiod;
+package com.adashrod.timeperiod;
 
 import org.junit.Test;
 
